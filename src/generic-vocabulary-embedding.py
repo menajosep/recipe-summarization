@@ -15,7 +15,7 @@ from prep_data import plt
 # static vars
 FN = 'vocabulary-embedding'
 seed = 42
-vocab_size = 20000
+#vocab_size = 20000
 embedding_dim = 300
 lower = False
 
@@ -35,7 +35,8 @@ def build_vocab(lst, vocab_file):
     if vocab_file is not None:
         constrained_vocab = np.load(vocab_file)
         vocab = [word for word in vocab if word in constrained_vocab]
-    return vocab, vocab_count
+    vocab_size = len(vocab)
+    return vocab, vocab_count, vocab_size
 
 
 def load_text():
@@ -118,7 +119,7 @@ def initialize_embedding(vocab_size, embedding_dim, embedding_weights):
     return embedding
 
 
-def copy_emb_weights(embedding, idx2word, embedding_weights, emb_index_dict):
+def copy_emb_weights(embedding, idx2word, embedding_weights, emb_index_dict, vocab_size):
     """Copy from embs weights of words that appear in our short vocabulary (idx2word)."""
     c = 0
     for i in range(vocab_size):
@@ -134,7 +135,7 @@ def copy_emb_weights(embedding, idx2word, embedding_weights, emb_index_dict):
     return embedding
 
 
-def build_word_to_embedding(embedding, word2idx, idx2word, embedding_index_dict, embedding_weights):
+def build_word_to_embedding(embedding, word2idx, idx2word, embedding_index_dict, embedding_weights, vocab_size):
     """Map full vocabulary to embeddings based on cosine distance."""
     embedding_thr = 0.5
     word2embedding = {}
@@ -208,17 +209,17 @@ def summarize_vocab(vocab, vocab_count):
 def main(emb_file, vocab_file, emb_type):
     """Generate intial word embedding for headlines and description."""
     headlines, desc = load_text()  # load headlines and descriptions
-    vocab, vocab_count = build_vocab(headlines + desc, vocab_file)  # build vocabulary
+    vocab, vocab_count, vocab_size = build_vocab(headlines + desc, vocab_file)  # build vocabulary
     summarize_vocab(vocab, vocab_count)  # summarize vocabulary
     word2idx, idx2word = get_idx(vocab)  # add special tokens and get reverse vocab lookup
     embedding_weights, embedding_index_dict = get_embeddings(emb_file)  # load embeddings data
 
     # initialize embedding
     embedding = initialize_embedding(vocab_size, embedding_dim, embedding_weights)
-    embedding = copy_emb_weights(embedding, idx2word, embedding_weights, embedding_index_dict)
+    embedding = copy_emb_weights(embedding, idx2word, embedding_weights, embedding_index_dict, vocab_size)
 
     # map vocab to embedding using cosine similarity
-    embedding_idx2idx = build_word_to_embedding(embedding, word2idx, idx2word, embedding_index_dict, embedding_weights)
+    embedding_idx2idx = build_word_to_embedding(embedding, word2idx, idx2word, embedding_index_dict, embedding_weights, vocab_size)
 
     # create a dense vector representation of headlines and descriptions
     description_vector = to_dense_vector(word2idx, desc, 'description')

@@ -52,9 +52,10 @@ Below are a few cherry-picked in-sample predictions from the model:
 #  * Get GloVe vectors: `wget -P data http://nlp.stanford.edu/data/glove.6B.zip; unzip data/glove.6B.zip -d data`
 #  * Initialize embeddings: `python src/vocabulary-embedding.py`
 * Initialize word embeddings vectors:
+  * Get GloVe vectors: `wget -P data http://nlp.stanford.edu/data/glove.6B.zip; unzip data/glove.6B.zip -d data`
   * Initialize embeddings with glove: 
   ```
-  nohup python src/generic-vocabulary-embedding.py --emb_file /home/jmena/dev/data/glove/glove.6B.300d.txt --emb_type glove --vocab_file data/words.dat > glove_embeddings.log &
+  nohup python src/generic-vocabulary-embedding.py --emb_file data/glove.6B.300d.txt --emb_type glove --vocab_file data/words.dat > glove_embeddings.log &
   ```
 * Train model: `python src/train_seq2seq.py`
 * Make predictions: `python src/predict.py`
