@@ -57,6 +57,11 @@ Below are a few cherry-picked in-sample predictions from the model:
   ```
   nohup python src/generic-vocabulary-embedding.py --emb_file data/glove.6B.300d.txt --emb_type glove --vocab_file data/words.dat > glove_embeddings.log &
   ```
+  * Get FastText vectors: `wget -P datahttps://s3-us-west-1.amazonaws.com/fasttext-vectors/wiki.en.vec`
+  * Initialize embeddings with FastText: 
+  ```
+  nohup python src/generic-vocabulary-embedding.py --emb_file data/wiki.en.vec --emb_type fasttext --vocab_file data/words.dat > glove_embeddings.log &
+  ```
 * Train model: `python src/train_seq2seq.py`
 * Make predictions: `python src/predict.py`
 * Serve predictions from RESTful API: `python src/server.py`

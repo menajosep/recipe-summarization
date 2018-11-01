@@ -192,11 +192,11 @@ def build_word_to_embedding(embedding, word2idx, idx2word, embedding_index_dict,
     return dict((word2idx[w], embedding_idx) for w, embedding_idx, _ in embedding_match)
 
 
-def to_dense_vector(word2idx, corpus, description, bins=50):
+def to_dense_vector(word2idx, corpus, description, vocab, emb_type, bins=50):
     """Create a dense vector representation of headlines."""
-    data = [[word2idx[token] for token in txt.split()] for txt in corpus]
+    data = [[word2idx[token] for token in txt.split() if token in vocab] for txt in corpus]
     plt.hist(list(map(len, data)), bins=bins)
-    plt.savefig(path.join(config.path_outputs, '{}_distribution.png'.format(description)))
+    plt.savefig(path.join(config.path_outputs, '{}-{}_distribution.png'.format(emb_type, description)))
     return data
 
 
@@ -222,8 +222,8 @@ def main(emb_file, vocab_file, emb_type):
     embedding_idx2idx = build_word_to_embedding(embedding, word2idx, idx2word, embedding_index_dict, embedding_weights, vocab_size)
 
     # create a dense vector representation of headlines and descriptions
-    description_vector = to_dense_vector(word2idx, desc, 'description')
-    headline_vector = to_dense_vector(word2idx, headlines, 'headline')
+    description_vector = to_dense_vector(word2idx, desc, 'description', vocab, emb_type)
+    headline_vector = to_dense_vector(word2idx, headlines, 'headline', vocab, emb_type)
 
     # write vocabulary to disk
     with open(path.join(config.path_data, '{}-{}.pkl'.format(emb_type, FN)), 'wb') as fp:
