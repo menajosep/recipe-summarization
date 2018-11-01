@@ -47,9 +47,15 @@ Below are a few cherry-picked in-sample predictions from the model:
 * Setup directories: `python src/config.py`
 * Download recipes from my Google Cloud Bucket: `wget -P recipe-box/data https://storage.googleapis.com/recipe-box/recipes_raw.zip; unzip recipe-box/data/recipes_raw.zip -d recipe-box/data` (alternatively, see the recipe-box submodule to scrape fresh recipe data)
 * Tokenize data: `python src/tokenize_recipes.py`
-* Initialize word embeddings with GloVe vectors:
-  * Get GloVe vectors: `wget -P data http://nlp.stanford.edu/data/glove.6B.zip; unzip data/glove.6B.zip -d data`
-  * Initialize embeddings: `python src/vocabulary-embedding.py`
+
+#* Initialize word embeddings with GloVe vectors:
+#  * Get GloVe vectors: `wget -P data http://nlp.stanford.edu/data/glove.6B.zip; unzip data/glove.6B.zip -d data`
+#  * Initialize embeddings: `python src/vocabulary-embedding.py`
+* Initialize word embeddings vectors:
+  * Initialize embeddings with glove: 
+  ```
+  nohup python src/generic-vocabulary-embedding.py --emb_file /home/jmena/dev/data/glove/glove.6B.300d.txt --emb_type glove --vocab_file data/words.dat > glove_embeddings.log &
+  ```
 * Train model: `python src/train_seq2seq.py`
 * Make predictions: `python src/predict.py`
 * Serve predictions from RESTful API: `python src/server.py`

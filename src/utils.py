@@ -55,20 +55,20 @@ def str_shape(x):
     return 'x'.join([str(element) for element in x.shape])
 
 
-def load_embedding(nb_unknown_words):
+def load_embedding(nb_unknown_words, emb_type):
     """Read word embeddings and vocabulary from disk."""
-    with open(os.path.join(config.path_data, '{}.pkl'.format(FN0)), 'rb') as fp:
-        embedding, idx2word, word2idx, glove_idx2idx = pickle.load(fp)
+    with open(os.path.join(config.path_data, '{}-{}.pkl'.format(emb_type,FN0)), 'rb') as fp:
+        embedding, idx2word, word2idx, embedding_idx2idx = pickle.load(fp)
     vocab_size, embedding_size = embedding.shape
     print('dimension of embedding space for words: {:,}'.format(embedding_size))
     print('vocabulary size: {:,} the last {:,} words can be used as place holders for unknown/oov words'.
           format(vocab_size, nb_unknown_words))
     print('total number of different words: {:,}'.format(len(idx2word)))
-    print('number of words outside vocabulary which we can substitue using glove similarity: {:,}'.
-          format(len(glove_idx2idx)))
+    print('number of words outside vocabulary which we can substitue using embedding similarity: {:,}'.
+          format(len(embedding_idx2idx)))
     print('number of words that will be regarded as unknonw(unk)/out-of-vocabulary(oov): {:,}'.
-          format(len(idx2word) - vocab_size - len(glove_idx2idx)))
-    return embedding, idx2word, word2idx, glove_idx2idx
+          format(len(idx2word) - vocab_size - len(embedding_idx2idx)))
+    return embedding, idx2word, word2idx, embedding_idx2idx
 
 
 def load_data():

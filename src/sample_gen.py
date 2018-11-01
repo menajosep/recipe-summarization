@@ -149,7 +149,7 @@ def vocab_unfold(desc, xs, oov0):
 
 
 def gensamples(
-        skips, short, data, idx2word, oov0, glove_idx2idx, vocab_size,
+        skips, short, data, idx2word, oov0, embedding_idx2idx, vocab_size,
         nb_unknown_words, avoid=None, avoid_score=1, **kwargs):
     """Generate text samples."""
     # unpack data
@@ -183,7 +183,7 @@ def gensamples(
         skips = range(min(maxlend, len(x)), max(maxlend, len(x)), abs(maxlend - len(x)) // skips + 1)
     for s in skips:
         start = lpadd(x[:s])
-        fold_start = vocab_fold(start, oov0, glove_idx2idx, vocab_size, nb_unknown_words)
+        fold_start = vocab_fold(start, oov0, embedding_idx2idx, vocab_size, nb_unknown_words)
         sample, score = beamsearch(
             predict=keras_rnn_predict,
             start=fold_start,

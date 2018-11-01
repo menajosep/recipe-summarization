@@ -102,7 +102,7 @@ def predict(sample_str):
         data=(x, y),
         idx2word=idx2word,
         oov0=oov0,
-        glove_idx2idx=glove_idx2idx,
+        embedding_idx2idx=glove_idx2idx,
         vocab_size=vocab_size,
         nb_unknown_words=nb_unknown_words,
     )

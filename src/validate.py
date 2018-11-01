@@ -60,24 +60,24 @@ def load_weights(model, filepath):
     return weight_values
 
 
-def main(n_samples=None):
+def main(n_samples=None, emb_type=None):
     """Predict a title for a recipe."""
     # load model parameters used for training
-    with open(path.join(path_models, 'model_params.json'), 'r') as f:
+    with open(path.join(path_models, '{}-model_params.json'.format(emb_type)), 'r') as f:
         model_params = json.load(f)
 
     # create placeholder model
     model = create_model(**model_params)
 
     # load weights from training run
-    load_weights(model, path.join(path_models, '{}.hdf5'.format(FN1)))
+    load_weights(model, path.join(path_models, '{}-{}.hdf5'.format(emb_type, FN1)))
 
     # load recipe titles and descriptions
-    with open(path.join(path_data, 'vocabulary-embedding.data.pkl'), 'rb') as fp:
+    with open(path.join(path_data, '{}-vocabulary-embedding.data.pkl'.format(emb_type)), 'rb') as fp:
         X_data, Y_data = pickle.load(fp)
 
     # load vocabulary
-    with open(path.join(path_data, '{}.pkl'.format(FN0)), 'rb') as fp:
+    with open(path.join(path_data, '{}-{}.pkl'.format(emb_type, FN0)), 'rb') as fp:
         embedding, idx2word, word2idx, glove_idx2idx = pickle.load(fp)
     vocab_size, embedding_size = embedding.shape
     oov0 = vocab_size - nb_unknown_words
@@ -124,7 +124,7 @@ def main(n_samples=None):
             data=(x, y),
             idx2word=idx2word,
             oov0=oov0,
-            glove_idx2idx=glove_idx2idx,
+            embedding_idx2idx=glove_idx2idx,
             vocab_size=vocab_size,
             nb_unknown_words=nb_unknown_words,
         )
@@ -166,5 +166,6 @@ def main(n_samples=None):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--n_samples', type=int, default=1, help='number of samples')
+    parser.add_argument('--emb_type', type=str, default=None, help='type of embeddings used')
     args = parser.parse_args()
-    main(n_samples=args.n_samples)
+    main(n_samples=args.n_samples, emb_type=args.emb_type)

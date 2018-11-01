@@ -15,7 +15,7 @@ from prep_data import plt
 # static vars
 FN = 'vocabulary-embedding'
 seed = 42
-vocab_size = 40000
+vocab_size = 20000
 embedding_dim = 300
 lower = False
 
@@ -35,7 +35,6 @@ def build_vocab(lst, vocab_file):
     if vocab_file is not None:
         constrained_vocab = np.load(vocab_file)
         vocab = [word for word in vocab if word in constrained_vocab]
-    vocab_size = len(vocab)
     return vocab, vocab_count
 
 
@@ -212,14 +211,14 @@ def main(emb_file, vocab_file, emb_type):
     vocab, vocab_count = build_vocab(headlines + desc, vocab_file)  # build vocabulary
     summarize_vocab(vocab, vocab_count)  # summarize vocabulary
     word2idx, idx2word = get_idx(vocab)  # add special tokens and get reverse vocab lookup
-    glove_embedding_weights, glove_index_dict = get_embeddings(emb_file)  # load GloVe data
+    embedding_weights, embedding_index_dict = get_embeddings(emb_file)  # load embeddings data
 
     # initialize embedding
-    embedding = initialize_embedding(vocab_size, embedding_dim, glove_embedding_weights)
-    embedding = copy_emb_weights(embedding, idx2word, glove_embedding_weights, glove_index_dict)
+    embedding = initialize_embedding(vocab_size, embedding_dim, embedding_weights)
+    embedding = copy_emb_weights(embedding, idx2word, embedding_weights, embedding_index_dict)
 
-    # map vocab to GloVe using cosine similarity
-    glove_idx2idx = build_word_to_embedding(embedding, word2idx, idx2word, glove_index_dict, glove_embedding_weights)
+    # map vocab to embedding using cosine similarity
+    embedding_idx2idx = build_word_to_embedding(embedding, word2idx, idx2word, embedding_index_dict, embedding_weights)
 
     # create a dense vector representation of headlines and descriptions
     description_vector = to_dense_vector(word2idx, desc, 'description')
@@ -227,7 +226,7 @@ def main(emb_file, vocab_file, emb_type):
 
     # write vocabulary to disk
     with open(path.join(config.path_data, '{}-{}.pkl'.format(emb_type, FN)), 'wb') as fp:
-        pickle.dump((embedding, idx2word, word2idx, glove_idx2idx), fp, 2)
+        pickle.dump((embedding, idx2word, word2idx, embedding_idx2idx), fp, 2)
 
     # write data to disk
     with open(path.join(config.path_data, '{}-{}.data.pkl'.format(emb_type, FN)), 'wb') as fp:

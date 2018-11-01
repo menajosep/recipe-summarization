@@ -71,7 +71,7 @@ def conv_seq_labels(xds, xhs, nflips, model, debug, oov0, glove_idx2idx, vocab_s
     return x, y
 
 
-def gen(Xd, Xh, batch_size, nb_batches, nflips, model, debug, oov0, glove_idx2idx, vocab_size, nb_unknown_words, idx2word):
+def gen(Xd, Xh, batch_size, nb_batches, nflips, model, debug, oov0, embedding_idx2idx, vocab_size, nb_unknown_words, idx2word):
     """Yield batches.
 
     for training use nb_batches=None
@@ -109,7 +109,7 @@ def gen(Xd, Xh, batch_size, nb_batches, nflips, model, debug, oov0, glove_idx2id
             model=model,
             debug=debug,
             oov0=oov0,
-            glove_idx2idx=glove_idx2idx,
+            glove_idx2idx=embedding_idx2idx,
             vocab_size=vocab_size,
             nb_unknown_words=nb_unknown_words,
             idx2word=idx2word,
